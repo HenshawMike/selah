@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && npm run build"
+  command = "pnpm install && pnpm run build"
   publish = ".next"
 
 [[plugins]]
@@ -8,4 +8,4 @@
 [build.environment]
   NODE_VERSION = "20"
   PNPM_VERSION = "9"
-  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_API_URL,SUPABASE_ANON_KEY,SUPABASE_URL"
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_API_URL,SUPABASE_ANON_KEY,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,WHATSAPP_VERIFY_TOKEN,WHATSAPP_ACCESS_TOKEN"
