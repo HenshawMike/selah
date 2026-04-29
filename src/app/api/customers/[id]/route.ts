@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CustomerService } from '@/services/customer.service';
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { name } = await req.json();
     await CustomerService.update(id, name);
     return NextResponse.json({ success: true });
@@ -13,9 +13,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     await CustomerService.delete(id);
     return NextResponse.json({ success: true });
   } catch (err) {
