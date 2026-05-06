@@ -3,7 +3,7 @@
 import { useDashboard } from './DashboardContext';
 
 export default function TopBar() {
-  const { defaultPrice, openModal } = useDashboard();
+  const { openModal } = useDashboard();
 
   return (
     <div style={{ 
@@ -45,36 +45,30 @@ export default function TopBar() {
 
       {/* Right Side: Global Settings */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ color: 'var(--color-text-secondary)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-            Current Price:
-          </span>
-          <span style={{ color: 'var(--color-text)', fontWeight: 'bold', fontSize: '15px' }}>
-            ₦{defaultPrice.toLocaleString()}
-          </span>
-        </div>
         <button 
-          onClick={() => openModal('set_price', 'settings', undefined, { price: defaultPrice })}
+          onClick={() => openModal('manage_products', 'products')}
           style={{ 
             background: 'none', 
             border: '1px solid #333', 
             color: 'var(--color-text)', 
-            padding: '4px 12px', 
+            padding: '6px 16px', 
             borderRadius: '4px', 
-            fontSize: '11px', 
+            fontSize: '12px', 
             cursor: 'pointer',
             fontWeight: 'bold',
-            transition: 'border-color 0.2s'
+            transition: 'all 0.2s',
+            letterSpacing: '0.5px'
           }}
-          className="price-edit-btn"
+          className="manage-products-btn"
         >
-          EDIT
+          PRODUCTS & PRICES
         </button>
       </div>
       <style jsx>{`
-        .price-edit-btn:hover {
+        .manage-products-btn:hover {
           border-color: #EF4444;
           color: #EF4444;
+          background-color: rgba(239, 68, 68, 0.05);
         }
         .add-order-btn:hover {
           background-color: #D43F3F !important;

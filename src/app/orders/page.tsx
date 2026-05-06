@@ -17,7 +17,8 @@ export default function Orders() {
     const query = searchQuery.toLowerCase();
     const customerName = (order.customers?.name || '').toLowerCase();
     const customerPhone = (order.customers?.phone || '');
-    const matchesSearch = customerName.includes(query) || customerPhone.includes(query);
+    const productName = (order.product_name || '').toLowerCase();
+    const matchesSearch = customerName.includes(query) || customerPhone.includes(query) || productName.includes(query);
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -29,7 +30,7 @@ export default function Orders() {
       <TableToolbar 
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        placeholder="Search by name or phone..."
+        placeholder="Search name, phone, or product..."
         showStatusFilter={true}
         statusFilter={statusFilter}
         onStatusChange={setStatusFilter}
@@ -46,24 +47,27 @@ export default function Orders() {
         <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'separate', borderSpacing: 0 }}>
           <thead style={{ position: 'sticky', top: 0, backgroundColor: '#111', zIndex: 10 }}>
             <tr>
-              <th style={{ padding: '1rem 1.5rem', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '12px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Date</th>
-              <th style={{ padding: '1rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '12px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Customer</th>
-              <th style={{ padding: '1rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '12px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Message</th>
-              <th style={{ padding: '1rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '12px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Qty</th>
-              <th style={{ padding: '1rem 2rem 1rem 1rem', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '12px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Total</th>
-              <th style={{ padding: '1rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '12px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Status</th>
-              <th style={{ padding: '1rem 1.5rem', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '12px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)', textAlign: 'right' }}>Action</th>
+              <th style={{ padding: '1rem 1.5rem', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '11px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Date</th>
+              <th style={{ padding: '1rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '11px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Customer</th>
+              <th style={{ padding: '1rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '11px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Product</th>
+              <th style={{ padding: '1rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '11px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Qty</th>
+              <th style={{ padding: '1rem 2rem 1rem 1rem', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '11px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Total</th>
+              <th style={{ padding: '1rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '11px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)' }}>Status</th>
+              <th style={{ padding: '1rem 1.5rem', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '11px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)', textAlign: 'right' }}>Action</th>
             </tr>
           </thead>
           <tbody>
             {filteredOrders.map((order: any) => (
               <tr key={order.id} className="table-row">
-                <td style={{ padding: '1rem 1.5rem', fontSize: '13px', color: 'var(--color-text-secondary)' }}>{new Date(order.created_at).toLocaleDateString()}</td>
+                <td style={{ padding: '1rem 1.5rem', fontSize: '12px', color: 'var(--color-text-secondary)' }}>{new Date(order.created_at).toLocaleDateString()}</td>
                 <td style={{ padding: '1rem 0' }}>
                   <EditableCustomerName id={order.customer_id} name={order.customers?.name} phone={order.customers?.phone} />
+                  {order.customers?.address && (
+                    <div style={{ fontSize: '10px', color: '#555', marginTop: '2px' }}>📍 {order.customers.address}</div>
+                  )}
                 </td>
-                <td style={{ padding: '1rem 0', fontSize: '13px', color: 'var(--color-text-secondary)', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  "{order.messages?.message_text || '...'}"
+                <td style={{ padding: '1rem 0' }}>
+                  <span className="product-tag">{order.product_name || 'Cement'}</span>
                 </td>
                 <td style={{ padding: '1rem 0', fontWeight: 'bold' }}>{order.quantity}</td>
                 <td style={{ padding: '1rem 2rem 1rem 1rem', fontWeight: 'bold' }}>{order.total_price ? `₦${Number(order.total_price).toLocaleString()}` : '--'}</td>
@@ -94,6 +98,9 @@ export default function Orders() {
               <div>
                 <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '4px' }}>{order.customers?.name || 'New Customer'}</div>
                 <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>{order.customers?.phone}</div>
+                {order.customers?.address && (
+                  <div style={{ fontSize: '11px', color: '#666', marginTop: '4px' }}>📍 {order.customers.address}</div>
+                )}
               </div>
               <span style={{ 
                 padding: '0.3rem 0.6rem', borderRadius: '4px', fontSize: '10px', fontWeight: 'bold',
@@ -102,8 +109,11 @@ export default function Orders() {
               }}>{order.status.toUpperCase()}</span>
             </div>
             
-            <div style={{ fontSize: '13px', color: 'var(--color-text-secondary)', fontStyle: 'italic', background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '6px' }}>
-              "{order.messages?.message_text || 'No message'}"
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <span className="product-tag">{order.product_name || 'Cement'}</span>
+              <div style={{ fontSize: '11px', color: 'var(--color-text-secondary)', background: 'rgba(255,255,255,0.03)', padding: '2px 8px', borderRadius: '4px', fontStyle: 'italic' }}>
+                {order.messages?.message_text || 'Manual Order'}
+              </div>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: '1rem' }}>
@@ -130,6 +140,17 @@ export default function Orders() {
       <style jsx>{`
         .table-row { border-bottom: 1px solid var(--color-border); transition: background-color 0.2s; }
         .table-row:hover { background-color: rgba(255, 255, 255, 0.02); }
+        .product-tag {
+          display: inline-block;
+          padding: 2px 8px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 4px;
+          font-size: 11px;
+          font-weight: 600;
+          color: #ddd;
+          text-transform: uppercase;
+        }
       `}</style>
 
       {/* Pagination (Simplified for mobile) */}

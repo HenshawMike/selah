@@ -3,8 +3,8 @@ import { OrderService } from '@/services/order.service';
 
 export async function POST(req: NextRequest) {
   try {
-    const { phone, name, quantity, unit_price } = await req.json();
-    await OrderService.createManual(phone, name, quantity, unit_price);
+    const { phone, name, productId, quantity, unit_price, address } = await req.json();
+    await OrderService.createManual(phone, name, productId, quantity, unit_price, address);
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (err) {
     console.error('API Manual Order Error:', err);

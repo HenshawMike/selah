@@ -55,7 +55,10 @@ export default function Dashboard() {
       </div>
 
       <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.5rem' }}>
-        <h2 style={{ fontSize: '18px', marginBottom: '1.5rem' }}>Recent Activity</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '18px', margin: 0 }}>Recent Activity</h2>
+          <span style={{ fontSize: '12px', color: '#666' }}>Showing last 5 orders</span>
+        </div>
         
         {recentOrders.length > 0 ? (
           <>
@@ -65,7 +68,7 @@ export default function Dashboard() {
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
                     <th style={{ padding: '0.75rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '13px' }}>Customer</th>
-                    <th style={{ padding: '0.75rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '13px' }}>Message</th>
+                    <th style={{ padding: '0.75rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '13px' }}>Product</th>
                     <th style={{ padding: '0.75rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '13px' }}>Qty</th>
                     <th style={{ padding: '0.75rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '13px' }}>Total</th>
                     <th style={{ padding: '0.75rem 0', color: 'var(--color-text-secondary)', fontWeight: 'normal', fontSize: '13px' }}>Status</th>
@@ -76,10 +79,22 @@ export default function Dashboard() {
                   {recentOrders.map((order: any) => (
                     <tr key={order.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
                       <td style={{ padding: '1rem 0' }}>
-                        <EditableCustomerName id={order.customer_id} name={order.customers?.name} phone={order.customers?.phone} />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          <EditableCustomerName id={order.customer_id} name={order.customers?.name} phone={order.customers?.phone} />
+                          {order.customers?.address && (
+                            <span style={{ fontSize: '10px', color: '#666', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              📍 {order.customers.address}
+                            </span>
+                          )}
+                        </div>
                       </td>
-                      <td style={{ padding: '1rem 0', fontSize: '13px', color: 'var(--color-text-secondary)', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        "{order.messages?.message_text || '...'}"
+                      <td style={{ padding: '1rem 0' }}>
+                        <span className="product-tag">{order.product_name || 'Cement'}</span>
+                        {order.messages?.message_text && (
+                          <div style={{ fontSize: '11px', color: '#555', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '4px' }}>
+                            "{order.messages.message_text}"
+                          </div>
+                        )}
                       </td>
                       <td style={{ padding: '1rem 0' }}>{order.quantity}</td>
                       <td style={{ padding: '1rem 0' }}>{order.total_price ? `₦${Number(order.total_price).toLocaleString()}` : '--'}</td>
@@ -107,12 +122,18 @@ export default function Dashboard() {
               {recentOrders.map((order: any) => (
                 <div key={order.id} className="mobile-card" style={{ border: 'none', borderBottom: '1px solid var(--color-border)', borderRadius: 0, padding: '1rem 0', margin: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <div style={{ fontWeight: 'bold', fontSize: '15px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <EditableCustomerName id={order.customer_id} name={order.customers?.name} phone={order.customers?.phone} />
+                      {order.customers?.address && (
+                        <span style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>📍 {order.customers.address}</span>
+                      )}
                     </div>
-                    <span style={{ fontSize: '10px', fontWeight: 'bold', color: order.status === 'paid' ? 'var(--color-success)' : '#3B82F6' }}>{order.status.toUpperCase()}</span>
+                    <span style={{ fontSize: '10px', fontWeight: 'bold', color: order.status === 'paid' ? 'var(--color-success)' : order.status === 'draft' ? '#3B82F6' : 'var(--color-warning)' }}>{order.status.toUpperCase()}</span>
                   </div>
-                  <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginBottom: '0.75rem' }}>"{order.messages?.message_text || 'No message'}"</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                    <span className="product-tag">{order.product_name || 'Cement'}</span>
+                    <div style={{ fontSize: '11px', color: 'var(--color-text-secondary)' }}>Qty: {order.quantity}</div>
+                  </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ fontSize: '16px', fontWeight: 'bold' }}>₦{Number(order.total_price || 0).toLocaleString()}</div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -155,6 +176,19 @@ export default function Dashboard() {
         }
         .stat-value.highlight {
           color: var(--color-danger);
+        }
+
+        .product-tag {
+          display: inline-block;
+          padding: 2px 8px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 4px;
+          font-size: 10px;
+          font-weight: 600;
+          color: #bbb;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
         @media (max-width: 768px) {

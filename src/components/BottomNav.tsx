@@ -15,14 +15,9 @@ const Icons = {
   ),
   Debts: () => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 3h12" />
-      <path d="M6 8h12" />
-      <path d="M7 13h10" />
-      <path d="M12 3v18" />
-      <path d="M9 18h6" />
-      <path d="M12 21L8 17" />
-      <path d="M12 21L16 17" />
-      <text x="50%" y="60%" textAnchor="middle" fontSize="12" fontWeight="bold" fill="currentColor" stroke="none" transform="translate(0, 2)">₦</text>
+      <path d="M7 21V3L17 21V3" />
+      <path d="M5 10h14" />
+      <path d="M5 14h14" />
     </svg>
   )
 };
@@ -30,10 +25,9 @@ const Icons = {
 // Better Naira SVG without the text tag for cleaner lines
 const NairaIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M6 5h12M6 9h12" />
-    <path d="M7 4l10 16" />
-    <path d="M7 20V4" />
-    <path d="M17 4v16" />
+    <path d="M7 21V3L17 21V3" />
+    <path d="M5 10h14" />
+    <path d="M5 14h14" />
   </svg>
 );
 

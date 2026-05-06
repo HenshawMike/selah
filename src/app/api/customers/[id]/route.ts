@@ -4,8 +4,8 @@ import { CustomerService } from '@/services/customer.service';
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const { name } = await req.json();
-    await CustomerService.update(id, name);
+    const { name, address } = await req.json();
+    await CustomerService.update(id, { name, address });
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('API Update Customer Error:', err);

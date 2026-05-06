@@ -4,8 +4,8 @@ import { OrderService } from '@/services/order.service';
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const { quantity, unit_price } = await req.json();
-    await OrderService.confirm(id, quantity, unit_price);
+    const { productId, quantity, unit_price } = await req.json();
+    await OrderService.confirm(id, productId, quantity, unit_price);
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('API Confirm Order Error:', err);

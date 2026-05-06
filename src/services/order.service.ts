@@ -11,8 +11,8 @@ export const OrderService = {
     return data;
   },
 
-  async createManual(phone: string, name: string, quantity: number, unit_price?: number) {
-    const { data: customer, error: cErr } = await supabase
+  async createManual(phone: string, name: string, productId: string, quantity: number, unit_price: number, address?: string) {
+    const { data: customer, error: findError } = await supabase
       .from('customers')
       .select('*')
       .eq('phone', phone)
@@ -20,35 +20,60 @@ export const OrderService = {
 
     let targetCustomerId = customer?.id;
     if (!customer) {
-      const { data: newC, error: nCErr } = await supabase
+      const { data: newC, error: createError } = await supabase
         .from('customers')
-        .insert([{ phone, name: name || 'Unknown' }])
+        .insert([{ phone, name: name || 'Unknown', address }])
         .select()
         .single();
-      if (nCErr) throw nCErr;
+      if (createError) throw createError;
       targetCustomerId = newC.id;
+    } else if (address || name) {
+      // Update existing customer info if provided
+      const updates: any = {};
+      if (name && (!customer.name || customer.name === 'Unknown')) updates.name = name;
+      if (address && !customer.address) updates.address = address;
+      
+      if (Object.keys(updates).length > 0) {
+        await supabase.from('customers').update(updates).eq('id', customer.id);
+      }
     }
 
-    let finalPrice = unit_price;
-    if (!finalPrice) {
-      const { data: dist } = await supabase.from('distributors').select('default_price').single();
-      finalPrice = dist?.default_price;
-    }
+    const { data: product } = await supabase
+      .from('products')
+      .select('name')
+      .eq('id', productId)
+      .single();
 
     const { error } = await supabase.from('orders').insert([{
       customer_id: targetCustomerId,
+      product_id: productId,
+      product_name: product?.name || 'Cement',
       quantity,
-      unit_price: finalPrice,
-      total_price: quantity * (finalPrice || 0),
+      unit_price,
+      total_price: quantity * unit_price,
       status: 'unpaid'
     }]);
     if (error) throw error;
   },
 
-  async confirm(id: string, quantity: number, unit_price: number) {
+  async confirm(id: string, productId: string, quantity: number, unit_price: number) {
+    const { data: product } = await supabase
+      .from('products')
+      .select('name')
+      .eq('id', productId)
+      .single();
+
     const { error } = await supabase
       .from('orders')
-      .update({ quantity, unit_price, total_price: quantity * unit_price, status: 'unpaid' })
+      .update({ 
+        product_id: productId,
+        product_name: product?.name || 'Cement',
+        quantity, 
+        unit_price, 
+        total_price: quantity * unit_price, 
+        status: 'unpaid',
+        updated_at: new Date().toISOString()
+      })
       .eq('id', id);
     if (error) throw error;
   },

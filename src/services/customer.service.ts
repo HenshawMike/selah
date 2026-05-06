@@ -32,8 +32,11 @@ export const CustomerService = {
     return data;
   },
 
-  async update(id: string, name: string) {
-    const { error } = await supabase.from('customers').update({ name }).eq('id', id);
+  async update(id: string, updates: { name?: string; address?: string }) {
+    const { error } = await supabase
+      .from('customers')
+      .update(updates)
+      .eq('id', id);
     if (error) throw error;
   },
 
